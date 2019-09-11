@@ -1,0 +1,14 @@
+#Dont track files with these extensions
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+
+
+#Don't track these directories
+.DS_Store
+.ipynb_checkpoints
+
