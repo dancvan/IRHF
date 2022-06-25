@@ -27,7 +27,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 \label{sec:I}
-As the Advanced LIGO detectors reach $\approx$ 200kW of circulating power in the Fabry Perot arm cavities, ring heater actuation becomes cruicial for O3 comissioning but to achieve a required thermo-optic lens by adjusting the ring heater acutators it may take on the order of 10-12 hours (Fig \ref{fig:meas}) to reach a steady thermal lens. This results in a large amount of time the interferometer will be improperly mode matched and makes adjusting thermal compensation a laborious process. The thermo-optic step response of the LIGO test mass / ring heater system can be shortened to 2-4 hours with real time digital filtering of the ring heater actuator power input. The following sections describe the concept and design of contructing the real-time digital filter.
+As the Advanced LIGO detectors reach $\approx$ 200kW of circulating power in the Fabry Perot arm cavities, ring heater actuation becomes cruicial for O3 comissioning and to achieve a required thermo-optic lens by adjusting the ring heater (RH) acutators it may take on the order of 10-12 hours (Fig \ref{fig:meas}) to reach a steady thermal lens. This response after RH adjustement results in a large amount of time the interferometer will be improperly mode matched, making the adjustment of thermal compensation a laborious process. The thermo-optic step response of the LIGO test mass / ring heater system can be shortened to 2-4 hours with real time digital filtering of the ring heater actuator power input. The following sections describe the concept and design of contructing the real-time digital filter.
 
 
 \begin{figure}[H]
@@ -40,7 +40,7 @@ As the Advanced LIGO detectors reach $\approx$ 200kW of circulating power in the
 \section{Concept}
 \label{sec:III}
 
-Before this method was implemented at the LIGO Hanford and Livingston sites, ring heater settings were adjusted by stepping the ring heater to a desired power though the thermo-optic step response function (H(s)) of the RH on ITMY (Fig [\ref{fig:meas}]) shows that for an approximate 10 hour period after your RH input power is changed,  $\frac{\mathrm{d}\alpha_{\mathrm{sp}}}{\mathrm{dt}}$ is nonzero. This long response time can be attributed to undermanaged heat being injected through the optic by stepping the power to the RH actuators.
+Before this method was implemented at the LIGO Hanford and Livingston sites, ring heater settings were adjusted by stepping the ring heater to a desired power though the thermo-optic step response function (H(s)) of the RH (Fig [\ref{fig:meas}]) shows the ITMY RH response for an approximate 10 hour period after your RH input power is changed,  $\frac{\mathrm{d}\alpha_{\mathrm{sp}}}{\mathrm{dt}}$ is nonzero. This long response time can be attributed to undermanaged heat being injected through the optic by stepping the power to the RH actuators.
 
 \begin{figure}[H]
 \includegraphics[page=1,width=\textwidth]{RH_input_filter_figures.pdf}
@@ -88,7 +88,7 @@ By just inverting the filter we have constructed a filter with a logarithmic ris
 
 \newpage
 
-\subsection{Ring Heater input filter (Real time digital filter) ($[H(s)]^{*-1}$)}
+\subsection{Ring Heater input filter (Real time digital filter) ([H$^{-1}$(s)]$^{*}$)}
 An important modification was made after inverting the filter: 2 poles were added at -.0007 Hz to the same level of gain at DC ($<10^{-6}$Hz). This limit to the filter is necessary to reassure stability at .1 mHz.
 
 \begin{figure}[H]
@@ -97,7 +97,7 @@ An important modification was made after inverting the filter: 2 poles were adde
 \label{fig:inv_plant_filt_mod}
 \end{figure}
 
-$$ [H(s)]^{-1*} = \frac{(s+8.168*10^{-5}) (s+0.0003142) (s+0.0005969)}{(s+3.142*10^{-5}) (s+0.0006994)^2} $$
+$$ [H^{-1}(s)]^{*} = \frac{(s+8.168*10^{-5}) (s+0.0003142) (s+0.0005969)}{(s+3.142*10^{-5}) (s+0.0006994)^2} $$
 
 
 \newpage
@@ -106,7 +106,7 @@ $$ [H(s)]^{-1*} = \frac{(s+8.168*10^{-5}) (s+0.0003142) (s+0.0005969)}{(s+3.142*
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{python/IRHF_step_vs_filt_step}
-\caption{Comparison of the natural RH response and the response to the conditioned input. The above plot is simulated in Matlab by passing the RH input time series (top plot) through the $[H(s)]^{-1*}$ and $H(s)$ to acquire with the result lensing behavior on the bottom plot.}
+\caption{Comparison of the natural RH response and the response to the conditioned input. The above plot is simulated in Matlab by passing the RH input time series (top plot) through the $[H^{-1}(s)]*G(s)$ and $H(s)$ to acquire with the result lensing behavior on the bottom plot.}
 \label{fig:comparison}
 \end{figure}
 
@@ -118,21 +118,35 @@ Figure (?) demonstrates the performance of the filter for a ? W change of the RH
 
 
 \section{Limitations}
-Though the RH does reduce the mirror ROC convergence time by nearly a factor of 6, there needs to be discussion about the limitations of the filter. When inverting this filter we are demanding the most step-like thermo-optic response from our initial plant H(s). Therefore this could imply (look into this) that any more energy injected into the system would imply overshoot while any less would imply an undershoot. In a way the inversion suggests the most optimal time series.  This being said, we also must demand that the system remain stable in this chain of filters which requires that we limit the gain so that $[H(s)]^{-1*} \leq 1$ for $Re(s)/(2*\pi)>.1 \mathrm{mHz}$.
-\subsection{Comparison with physical models}
+Though the RH does reduce the mirror ROC convergence time by nearly a factor of 6, there needs to be discussion about the limitations of the filter. When inverting this filter you might imagine that we are demanding the most step-like thermo-optic response from our initial plant H(s). Therefore this could imply (look into this) that any more energy injected into the system would imply overshoot while any less would imply an undershoot, but it turns out that if you incorporate the much larger RH range. In a way the inversion suggests the most optimal time series.  This being said, we also must demand that the system remain stable in this chain of filters which requires that we limit the gain so that $[H^{-1}(s)]^{*} \leq 1$ for $Re(s)/(2*\pi)>.1 \mathrm{mHz}$.
 
 
-\section{Dynamic Thermal compensation}
-At LLO mitigating the ROC changes due to the central self heating transient is achieved through dynamic thermal compensation by adjustment of the RH actuators (at LHO it is achieved by reducing (central) CO2 heating) [refs]. The problem with using the above real time digital filter is that the response is at a time scale that is still significantly longer ($\approx 2.5\;\mathrm{hrs}$) than the (central) self heating of the test masses from the interferometer beam ($\approx 1\; \mathrm{hr}$).
+\section{Dynamic Thermal Compensation and Limitations}
+At LLO mitigating the ROC change due to the central self heating transient is achieved through dynamic thermal compensation by adjustment of the RH actuators (at LHO it is achieved by reducing (central) CO2 heating) [refs] (alogs and TVo's thesis). The problem using the above real time digital filter can be with the above response, which is at a time scale is still significantly longer ($\approx 2.5\;\mathrm{hrs}$) than the (central) self heating of the test masses from the interferometer beam ($\approx 1\; \mathrm{hr}$).
 
-There can be generalizations to this
+Making the assumption that the plant filter still applies for large RH power and that the largest actuation power that the RHs can supply can go up to 40W, we extend the above method to attempt to compensate the central lensing caused by self heating of the interferometer beam. This quick mirror geometry adjustement not only proves to be useful for maintaining coupled cavity mode matching also helps mitigate parametric instabilities PI [ref Terra's paper].
 
-This form of dynamic thermal compensation becomes crucial at high power (insert power mentioned in Terra's paper), not only to improve mode matching between coupled cavities but to avoid parametric instability (PI) [reference Terra's paper].
+Given this model, we demonstrate that this thermal compensation technique may only be used for up to \textbf{$\approx$ 400 kW of circulating arm power}.
+
+\subsection{Limitations}
+Though in principle this fast actuation behavior can be done, it is still hard to say whether it will be a strain to the 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\newpage
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{python/IRHF_compare_filts_PI_paper} \label{fig:pipaperfig}
+\caption{Comparison between the natural transient response of the ring heater (RH) vs. the response with ring heater input filtering. The central heating data used here was generated by a COMSOL model of the test mass with 1\,W of central absorbed power (with a resultant lensing of 947 [uD]/[W$_{\mathrm{abs}}$]) scaled to 21\,mW absorbed power. For the measured ITM absorption values in O3, we estimate that the above curve would be produced from 100\,kW of circulating arm power.}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{python/RH_input_filt_G1_G2}
+\caption{Comparison between two RH input filters, where the H$^{-1}$(s)G$_2$(s) input filter was used to generate the \ref{fig:pipaperfig} time series.}
+\end{figure}
+
 
 \begin{thebibliography}{99}
 
