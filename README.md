@@ -1,2 +1,2 @@
 # IRHF
-Intended to hold things related to the ring heater input conditioning for a shortened thermo-optic response.
+Building a filter to modify the ITMY RH transient for an improved thermo-optic response.
